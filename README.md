@@ -34,6 +34,9 @@ go build main.go
 go build -gcflags="-e" && ./bobberino
 ```
 
+## Example
+![image](https://user-images.githubusercontent.com/34389545/81494398-47fc5b00-926e-11ea-8bd4-e36038716260.png)
+
 ## Contributing
 
 -   MIT License
