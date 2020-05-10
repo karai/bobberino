@@ -31,7 +31,7 @@ func semverInfo() string {
 	var majorSemver, minorSemver, patchSemver, wholeString string
 	majorSemver = "0"
 	minorSemver = "1"
-	patchSemver = "0"
+	patchSemver = "2"
 	wholeString = majorSemver + "." + minorSemver + "." + patchSemver
 	return wholeString
 }
@@ -50,22 +50,45 @@ func main() {
 	}
 
 	crossCompile("aix", "ppc64", "", filename)
+	crossCompile("android", "386", "", filename)
 	crossCompile("android", "amd64", "", filename)
+	crossCompile("android", "arm", "", filename)
 	crossCompile("android", "arm64", "", filename)
+	crossCompile("darwin", "386", "", filename)
 	crossCompile("darwin", "amd64", "", filename)
 	crossCompile("darwin", "arm64", "", filename)
 	crossCompile("dragonfly", "amd64", "", filename)
+	crossCompile("freebsd", "386", "", filename)
 	crossCompile("freebsd", "amd64", "", filename)
+	crossCompile("freebsd", "arm", "", filename)
 	crossCompile("freebsd", "arm64", "", filename)
+	crossCompile("illumos", "amd64", "", filename)
 	crossCompile("js", "wasm", ".wasm", filename)
+	crossCompile("linux", "386", "", filename)
 	crossCompile("linux", "amd64", "", filename)
+	crossCompile("linux", "arm", "", filename)
 	crossCompile("linux", "arm64", "", filename)
+	crossCompile("linux", "mips", "", filename)
+	crossCompile("linux", "mips64", "", filename)
+	crossCompile("linux", "mips64le", "", filename)
+	crossCompile("linux", "mipsle", "", filename)
+	crossCompile("linux", "ppc64", "", filename)
+	crossCompile("linux", "ppc64le", "", filename)
+	crossCompile("linux", "riscv64", "", filename)
+	crossCompile("linux", "s390x", "", filename)
+	crossCompile("netbsd", "386", "", filename)
 	crossCompile("netbsd", "amd64", "", filename)
+	crossCompile("netbsd", "arm", "", filename)
 	crossCompile("netbsd", "arm64", "", filename)
+	crossCompile("openbsd", "386", "", filename)
 	crossCompile("openbsd", "amd64", "", filename)
+	crossCompile("openbsd", "arm", "", filename)
 	crossCompile("openbsd", "arm64", "", filename)
+	crossCompile("plan9", "386", "", filename)
 	crossCompile("plan9", "amd64", "", filename)
+	crossCompile("plan9", "arm", "", filename)
 	crossCompile("solaris", "amd64", "", filename)
+	crossCompile("windows", "386", ".exe", filename)
 	crossCompile("windows", "amd64", ".exe", filename)
 	crossCompile("windows", "arm", ".exe", filename)
 }
@@ -76,10 +99,6 @@ func announce() {
 	logrus.Info("Building: ", filename)
 	logrus.Info("Starting in 2 seconds, press CTRL C to interrupt.")
 	time.Sleep(2 * time.Second)
-}
-
-func zipFile(filename string) {
-
 }
 
 func crossCompile(osName, archName, extension, filename string) {
