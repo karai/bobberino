@@ -23,6 +23,9 @@ const appURL = "https://karai.io https://turtlecoin.lol"
 var licensevar bool
 var filename string
 
+var t time.Time = time.Now()
+var timestamp string = t.Format("20060102150405")
+
 // Version string
 func semverInfo() string {
 	var majorSemver, minorSemver, patchSemver, wholeString string
@@ -45,6 +48,7 @@ func main() {
 	if licensevar {
 		printLicense()
 	}
+
 	crossCompile("aix", "ppc64", "", filename)
 	crossCompile("android", "amd64", "", filename)
 	crossCompile("android", "arm64", "", filename)
@@ -74,11 +78,16 @@ func announce() {
 	time.Sleep(2 * time.Second)
 }
 
+func zipFile(filename string) {
+
+}
+
 func crossCompile(osName, archName, extension, filename string) {
 	gobin := "go"
 	gobuild := "build"
 	goflags := "-o"
 	descriptiveFilename := "builds/" + osName + archName + "/" + strings.TrimRight(filename, ".go") + extension
+	fullZipDir := "builds/" + osName + archName + "/"
 	gofilename := filename
 	osENV := "GOOS=" + osName
 	archENV := "GOARCH=" + archName
@@ -94,6 +103,14 @@ func crossCompile(osName, archName, extension, filename string) {
 	} else {
 		color.Set(color.FgHiGreen)
 		fmt.Println(osName + "/" + archName + "\t - ✔️ DONE")
+
+		app0 := "zip"
+		app1 := "-r"
+		app2 := "./builds/" + osName + "-" + archName + "-" + timestamp + ".zip"
+		app3 := fullZipDir
+		cmd := exec.Command(app0, app1, app2, app3)
+		stdout, _ := cmd.Output()
+		logrus.Debug(stdout)
 	}
 	logrus.Debug(string(stdout))
 }
