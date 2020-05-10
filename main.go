@@ -30,8 +30,8 @@ var timestamp string = t.Format("20060102150405")
 func semverInfo() string {
 	var majorSemver, minorSemver, patchSemver, wholeString string
 	majorSemver = "0"
-	minorSemver = "0"
-	patchSemver = "2"
+	minorSemver = "1"
+	patchSemver = "0"
 	wholeString = majorSemver + "." + minorSemver + "." + patchSemver
 	return wholeString
 }
