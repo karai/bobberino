@@ -24,8 +24,6 @@
 
 ## Building
 
-Note: These build instructions should run on any OS. Some Windows users will need to [modify the libp2p init line](https://superuser.com/questions/223104/setting-and-using-variable-within-same-command-line-in-windows-cmd-exe) to properly use inline environment variables
-
 ```bash
 go build main.go
 ```
