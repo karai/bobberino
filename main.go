@@ -28,7 +28,7 @@ func semverInfo() string {
 	var majorSemver, minorSemver, patchSemver, wholeString string
 	majorSemver = "0"
 	minorSemver = "0"
-	patchSemver = "1"
+	patchSemver = "2"
 	wholeString = majorSemver + "." + minorSemver + "." + patchSemver
 	return wholeString
 }
@@ -85,13 +85,15 @@ func crossCompile(osName, archName, extension, filename string) {
 	cmd := exec.Command(gobin, gobuild, goflags, descriptiveFilename, gofilename)
 	newEnv := append(os.Environ(), osENV, archENV)
 	cmd.Env = newEnv
-	color.Set(color.FgHiGreen)
-	fmt.Println(osName + "/" + archName + "\t - ✔️ DONE")
+
 	stdout, err := cmd.CombinedOutput()
-	color.Set(color.FgHiRed)
 	if err != nil {
+		color.Set(color.FgHiRed)
 		fmt.Println(osName + "/" + archName + "\t - ⛔ PROBLEM")
 		logrus.Debug(err)
+	} else {
+		color.Set(color.FgHiGreen)
+		fmt.Println(osName + "/" + archName + "\t - ✔️ DONE")
 	}
 	logrus.Debug(string(stdout))
 }
