@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/fatih/color"
+	"github.com/gen2brain/beeep"
 	"github.com/sirupsen/logrus"
 )
 
@@ -20,9 +21,12 @@ const appLicense = "https://choosealicense.com/licenses/mit/"
 const appRepository = "https://github.com/karai/bobberino"
 const appURL = "https://karai.io https://turtlecoin.lol"
 
+// Flag vars
 var licensevar bool
 var filename string
+var silentvar bool
 
+// Time vars
 var t time.Time = time.Now()
 var timestamp string = t.Format("20060102150405")
 
@@ -30,25 +34,29 @@ var timestamp string = t.Format("20060102150405")
 func semverInfo() string {
 	var majorSemver, minorSemver, patchSemver, wholeString string
 	majorSemver = "0"
-	minorSemver = "1"
-	patchSemver = "2"
+	minorSemver = "2"
+	patchSemver = "0"
 	wholeString = majorSemver + "." + minorSemver + "." + patchSemver
 	return wholeString
 }
 
+// Defining launch parameters
 func parseFlags() {
 	flag.StringVar(&filename, "file", "main.go", "File to compile, main.go by default")
 	flag.BoolVar(&licensevar, "license", false, "Show the license before we get started.")
+	flag.BoolVar(&silentvar, "silent", false, "Run without notifications")
 	flag.Parse()
 }
 
 func main() {
 	parseFlags()
 	announce()
+
 	if licensevar {
 		printLicense()
 	}
 
+	completeTimer := time.Now()
 	crossCompile("aix", "ppc64", "", filename)
 	crossCompile("android", "386", "", filename)
 	crossCompile("android", "amd64", "", filename)
@@ -91,8 +99,11 @@ func main() {
 	crossCompile("windows", "386", ".exe", filename)
 	crossCompile("windows", "amd64", ".exe", filename)
 	crossCompile("windows", "arm", ".exe", filename)
+	jobEnd := time.Since(completeTimer)
+	logrus.Info("Complete build job in ", jobEnd)
 }
 
+// Announce execution
 func announce() {
 	color.Set(color.FgHiWhite)
 	logrus.Info(appName + " v" + semverInfo() + " running!")
@@ -101,7 +112,12 @@ func announce() {
 	time.Sleep(2 * time.Second)
 }
 
+// Generic compile function
+// Takes string parameters of:
+// os name, cpu architecture, fil extesion, and filename
 func crossCompile(osName, archName, extension, filename string) {
+	// fmt.Println("Silent? ", silentvar)
+	processTimer := time.Now()
 	gobin := "go"
 	gobuild := "build"
 	goflags := "-o"
@@ -113,15 +129,23 @@ func crossCompile(osName, archName, extension, filename string) {
 	cmd := exec.Command(gobin, gobuild, goflags, descriptiveFilename, gofilename)
 	newEnv := append(os.Environ(), osENV, archENV)
 	cmd.Env = newEnv
-
 	stdout, err := cmd.CombinedOutput()
+	processEnd := time.Since(processTimer)
 	if err != nil {
 		color.Set(color.FgHiRed)
 		fmt.Println(osName + "/" + archName + "\t - ⛔ PROBLEM")
+		if silentvar == false {
+			err := beeep.Notify("❌ Bobberino Build Failure", "👷🏻‍♂️ Boss, I can't build "+osName+" on "+archName+".", "assets/failure.png")
+			if err != nil {
+				logrus.Error(err)
+			}
+		}
 		logrus.Debug(err)
 	} else {
 		color.Set(color.FgHiGreen)
-		fmt.Println(osName + "/" + archName + "\t - ✔️ DONE")
+		fmt.Printf("%s/%s \t - ✔️ DONE in %v\n", osName, archName, processEnd)
+		// fmt.Printf(osName + "/" + archName + "\t - ✔️ DONE in ")
+		// fmt.Printf("%v", processEnd)
 
 		app0 := "zip"
 		app1 := "-r"
